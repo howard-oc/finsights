@@ -1,0 +1,302 @@
+[
+  {
+    "article_id": "ASTR-001",
+    "company_name": "Asterion Technologies",
+    "ticker": "ASTR",
+    "published_at": "2026-11-25T09:15:00Z",
+    "headline": "Asterion reports record cloud revenue",
+    "source": "Northstar Markets",
+    "url": "https://example.test/astr-001",
+    "snippet": "Asterion Technologies said cloud revenue reached a record in its latest quarter."
+  },
+  {
+    "article_id": "ASTR-002",
+    "company_name": "Asterion Technologies",
+    "ticker": "ASTR",
+    "published_at": "2026-11-25T12:30:00Z",
+    "headline": "Asterion unveils next-generation AI accelerator",
+    "source": "Tech Ledger",
+    "url": "https://example.test/astr-002",
+    "snippet": "Asterion announced the Orion accelerator, with general availability planned for 2027."
+  },
+  {
+    "article_id": "ASTR-003",
+    "company_name": "Asterion Technologies",
+    "ticker": "ASTR",
+    "published_at": "2026-11-24T08:40:00Z",
+    "headline": "Asterion narrows guidance range",
+    "source": "Capital Wire",
+    "url": "https://example.test/astr-003",
+    "snippet": "The company said fourth-quarter revenue guidance is now narrowed to a range of $420 million to $435 million."
+  },
+  {
+    "article_id": "ASTR-004",
+    "company_name": "Asterion Technologies",
+    "ticker": "ASTR",
+    "published_at": "2026-11-24T15:10:00Z",
+    "headline": "Asterion reports record cloud revenue",
+    "source": "Global Desk",
+    "url": "https://example.test/astr-004",
+    "snippet": "Asterion reported record cloud revenue and operating margin expansion in its quarterly update."
+  },
+  {
+    "article_id": "ASTR-005",
+    "company_name": "Asterion Technologies",
+    "ticker": "ASTR",
+    "published_at": "2026-11-24T15:12:00Z",
+    "headline": "Asterion reports record cloud revenue",
+    "source": "Northstar Markets",
+    "url": "https://example.test/astr-001",
+    "snippet": "Asterion Technologies said cloud revenue reached a record in its latest quarter."
+  },
+  {
+    "article_id": "ASTR-006",
+    "company_name": "Asterion Technologies",
+    "ticker": "ASTR",
+    "published_at": "2026-11-23T07:55:00Z",
+    "headline": "Asterion signs strategic chip-supply partnership",
+    "source": "Industry Times",
+    "url": "https://example.test/astr-006",
+    "snippet": "Asterion signed a two-year supply agreement with Helix Foundry for advanced chips."
+  },
+  {
+    "article_id": "ASTR-007",
+    "company_name": "Asterion Technologies",
+    "ticker": "ASTR",
+    "published_at": "2026-11-23T09:05:00Z",
+    "headline": "Asterion and Helix Foundry enter chip supply deal",
+    "source": "Semiconductor Daily",
+    "url": "https://example.test/astr-007",
+    "snippet": "Helix Foundry will supply advanced chips to Asterion under a two-year agreement."
+  },
+  {
+    "article_id": "ASTR-008",
+    "company_name": "Asterion Technologies",
+    "ticker": "ASTR",
+    "published_at": "2026-11-22T10:20:00Z",
+    "headline": "Patent dispute poses manageable risk, analyst says",
+    "source": "Market Brief",
+    "url": "https://example.test/astr-008",
+    "snippet": "A research note described Asterion's patent dispute as manageable and said a preliminary injunction remains possible."
+  },
+  {
+    "article_id": "ASTR-009",
+    "company_name": "Asterion Technologies",
+    "ticker": "ASTR",
+    "published_at": "2026-11-22T14:45:00Z",
+    "headline": "Court setback threatens Asterion patent position",
+    "source": "Legal Review",
+    "url": "https://example.test/astr-009",
+    "snippet": "A court allowed a competitor's motion to proceed in a patent dispute involving Asterion."
+  },
+  {
+    "article_id": "ASTR-010",
+    "company_name": "Asterion Technologies",
+    "ticker": "ASTR",
+    "published_at": "2026-11-21T11:30:00Z",
+    "headline": "Asterion appoints Maria Chen chief operating officer",
+    "source": "Executive Watch",
+    "url": "https://example.test/astr-010",
+    "snippet": "Asterion appointed Maria Chen as chief operating officer, effective December 1."
+  },
+  {
+    "article_id": "ASTR-011",
+    "company_name": "Asterion Technologies",
+    "ticker": "ASTR",
+    "published_at": "2026-11-20T09:00:00Z",
+    "headline": "European regulator opens Asterion data review",
+    "source": "Europe Regulation",
+    "url": "https://example.test/astr-011",
+    "snippet": "A European data regulator opened a review of Asterion's handling of customer information."
+  },
+  {
+    "article_id": "ASTR-012",
+    "company_name": "Asterion Technologies",
+    "ticker": "ASTR",
+    "published_at": "2026-11-20T16:15:00Z",
+    "headline": "Competitor Nova Systems launches rival AI platform",
+    "source": "Sector News",
+    "url": "https://example.test/astr-012",
+    "snippet": "Nova Systems launched a rival AI platform that may compete with Asterion's Orion offering."
+  },
+  {
+    "article_id": "ASTR-013",
+    "company_name": "Asterion Technologies",
+    "ticker": "ASTR",
+    "published_at": "2026-11-19T08:20:00Z",
+    "headline": "Asterion announces plan to acquire Meridian Robotics",
+    "source": "Deal Street",
+    "url": null,
+    "snippet": "Asterion said it plans to acquire private robotics firm Meridian Robotics for cash and stock."
+  },
+  {
+    "article_id": "ASTR-014",
+    "company_name": "Asterion Technologies",
+    "ticker": "ASTR",
+    "published_at": "2026-11-19T13:50:00Z",
+    "headline": "Asterion acquisition of Meridian Robotics faces shareholder review",
+    "source": "Deal Street",
+    "url": "https://example.test/astr-014",
+    "snippet": "Asterion said the proposed Meridian Robotics acquisition requires shareholder approval."
+  },
+  {
+    "article_id": "ASTR-015",
+    "company_name": "Asterion Technologies",
+    "ticker": "ASTR",
+    "published_at": "2026-11-18T10:10:00Z",
+    "headline": "Asterion and Helix expand test manufacturing agreement",
+    "source": "Industry Times",
+    "url": "https://example.test/astr-015",
+    "snippet": "Asterion and Helix Foundry expanded testing and manufacturing plans for the same chip programme."
+  },
+  {
+    "article_id": "ASTR-016",
+    "company_name": "Asterion Technologies",
+    "ticker": "ASTR",
+    "published_at": "2026-11-18T17:40:00Z",
+    "headline": "Cloud spending survey lifts software sector outlook",
+    "source": "Industry Watch",
+    "url": "https://example.test/astr-016",
+    "snippet": "An industry survey found software buyers plan to increase cloud spending over the next year."
+  },
+  {
+    "article_id": "ASTR-017",
+    "company_name": "Asterion Technologies",
+    "ticker": "ASTR",
+    "published_at": "2026-11-17T10:00:00Z",
+    "headline": "Asterion opens new design centre",
+    "source": "Regional Business",
+    "url": "https://example.test/astr-017",
+    "snippet": "Asterion opened a design centre in Manchester before the research period."
+  },
+  {
+    "article_id": "ASTR-018",
+    "company_name": "Asterion Technologies",
+    "ticker": "ASTR",
+    "published_at": "2026-11-26T08:00:00Z",
+    "headline": "Asterion CEO speaks at London conference",
+    "source": "Media Journal",
+    "url": "https://example.test/astr-018",
+    "snippet": "Asterion's chief executive spoke at a London conference after the research period."
+  },
+  {
+    "article_id": "ASTR-019",
+    "company_name": "Nova Systems",
+    "ticker": "NOVS",
+    "published_at": "2026-11-24T10:30:00Z",
+    "headline": "Nova Systems launches rival AI platform",
+    "source": "Sector News",
+    "url": "https://example.test/novs-019",
+    "snippet": "Nova Systems launched its new AI platform and did not mention Asterion in the announcement."
+  },
+  {
+    "article_id": "ASTR-020",
+    "company_name": "Asterion Technologies",
+    "ticker": "WRONG",
+    "published_at": "2026-11-23T12:00:00Z",
+    "headline": "Wrong-ticker Asterion filing",
+    "source": "Ticker Bureau",
+    "url": "https://example.test/wrong-020",
+    "snippet": "A filing header contains the wrong ticker symbol but names Asterion Technologies."
+  },
+  {
+    "article_id": "ASTR-021",
+    "company_name": "Asterion Technologies",
+    "ticker": "ASTR",
+    "published_at": null,
+    "headline": "Asterion missing timestamp announcement",
+    "source": "News Wire",
+    "url": null,
+    "snippet": "Asterion announced a board committee review but the feed omitted publication time."
+  },
+  {
+    "article_id": "ASTR-022",
+    "company_name": "Asterion Technologies",
+    "ticker": "ASTR",
+    "published_at": "not-a-timestamp",
+    "headline": "Asterion malformed timestamp filing",
+    "source": "Daily Filing",
+    "url": "https://example.test/astr-022",
+    "snippet": "Asterion filed an update with a timestamp that cannot be parsed."
+  },
+  {
+    "article_id": "ASTR-023",
+    "company_name": "Asterion Technologies",
+    "ticker": "ASTR",
+    "published_at": "2026-11-25T07:10:00Z",
+    "headline": "Asterion reports record cloud revenue",
+    "source": "Quick News",
+    "url": "https://example.test/astr-023",
+    "snippet": "Asterion posted quarterly cloud growth but did not disclose an absolute revenue figure."
+  },
+  {
+    "article_id": "ASTR-024",
+    "company_name": "Asterion Technologies",
+    "ticker": "ASTR",
+    "published_at": "2026-11-25T18:00:00Z",
+    "headline": "Asterion cloud margin outlook improves",
+    "source": "Capital Wire",
+    "url": "https://example.test/astr-024",
+    "snippet": "The company said margin performance improved in the cloud segment."
+  },
+  {
+    "article_id": "ASTR-025",
+    "company_name": "Asterion Technologies",
+    "ticker": "ASTR",
+    "published_at": "2026-11-21T15:20:00Z",
+    "headline": "Asterion settles supplier dispute",
+    "source": "Legal Review",
+    "url": "https://example.test/astr-025",
+    "snippet": "Asterion and a supplier agreed to a settlement, with no financial terms disclosed."
+  },
+  {
+    "article_id": "ASTR-026",
+    "company_name": "Asterion Technologies",
+    "ticker": "ASTR",
+    "published_at": "2026-11-20T12:30:00Z",
+    "headline": "Asterion partners with university on chip research",
+    "source": "Academic Wire",
+    "url": null,
+    "snippet": "Asterion and a university opened a chip-research programme with no funding amount disclosed."
+  },
+  {
+    "article_id": "ASTR-027",
+    "company_name": "Asterion Technologies",
+    "ticker": "ASTR",
+    "published_at": "2026-11-19T09:10:00Z",
+    "headline": "Asterion board adds independent director",
+    "source": "Governance Daily",
+    "url": "https://example.test/astr-027",
+    "snippet": "Asterion appointed an independent director to its board."
+  },
+  {
+    "article_id": "ASTR-028",
+    "company_name": "Asterion Technologies",
+    "ticker": "ASTR",
+    "published_at": "2026-11-18T09:30:00Z",
+    "headline": "Asterion quarterly earnings date confirmed",
+    "source": "Investor Desk",
+    "url": "https://example.test/astr-028",
+    "snippet": "Asterion confirmed the date of its next quarterly earnings release."
+  },
+  {
+    "article_id": "ASTR-029",
+    "company_name": "Asterion Technologies",
+    "ticker": "ASTR",
+    "published_at": "2026-11-18T14:10:00Z",
+    "headline": "Industry demand for AI servers stays strong",
+    "source": "Macro Ledger",
+    "url": "https://example.test/astr-029",
+    "snippet": "A market report said AI-server demand remained strong across the industry."
+  },
+  {
+    "article_id": "ASTR-030",
+    "company_name": "Asterion Technologies",
+    "ticker": "ASTR",
+    "published_at": "2026-11-24T11:40:00Z",
+    "headline": "Asterion quarterly filing delayed by auditor",
+    "source": "Audit News",
+    "url": "https://example.test/astr-030",
+    "snippet": "Asterion said its auditor needs additional time to complete the quarterly filing review."
+  }
+]
