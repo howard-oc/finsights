@@ -1,5 +1,11 @@
 """Validate local LangGraph deployment configuration without deploying remotely."""
 
+import os as _os
+from pathlib import Path as _Path
+
+# Pin the synthetic feed: these checks are written against the Asterion articles in data/news.json.
+_os.environ["LSEG_NEWS_JSON"] = str(_Path(__file__).resolve().parent.parent / "data" / "news.json")
+
 import json
 import sys
 from pathlib import Path
