@@ -4,9 +4,13 @@ To use other data (more tickers, real public prices), replace or append to the C
 """
 
 import csv
+import os
 from pathlib import Path
 
-PRICES_CSV = Path(__file__).resolve().parent.parent / "data" / "prices.csv"
+# LSEG_VIX_PRICES_CSV points the agent at another file, e.g. the eval scenarios in data/eval_prices.csv.
+PRICES_CSV = Path(
+    os.environ.get("LSEG_VIX_PRICES_CSV") or Path(__file__).resolve().parent.parent / "data" / "prices.csv"
+)
 
 
 def load_bars(ticker: str, start: str | None = None, end: str | None = None) -> list[dict]:

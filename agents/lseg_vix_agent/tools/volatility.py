@@ -42,7 +42,11 @@ def compute_metrics(ticker: str, start: str | None = None, end: str | None = Non
     bars = load_bars(ticker, start, end)
     if len(bars) < 3:
         return {"error": f"Not enough data for {ticker}. Available tickers: {available_tickers()}"}
+    return compute_metrics_from_bars(bars)
 
+
+def compute_metrics_from_bars(bars: list[dict]) -> dict:
+    """compute_metrics on bars already in memory (oldest first, all one ticker)."""
     days = _daily(bars)
     bars_per_day = max(d["bars"] for d in days)
     rets = [r for _, r in _intraday_log_returns(bars)]
@@ -77,7 +81,7 @@ def compute_metrics(ticker: str, start: str | None = None, end: str | None = Non
     range_second = mean(math.log(d["high"] / d["low"]) for d in second)
 
     return {
-        "ticker": ticker.upper(),
+        "ticker": bars[0]["ticker"].upper(),
         "window": {"start": bars[0]["timestamp"], "end": bars[-1]["timestamp"], "bars": len(bars), "days": len(days)},
         "period_return_pct": round((bars[-1]["close"] / bars[0]["open"] - 1) * 100, 2),
         "realized_vol_annualized_pct": round(realized_ann * 100, 1),
