@@ -8,7 +8,7 @@ All numbers are SYNTHETIC (seeded random walks), not real market data. The NVDA 
 calm Monday and Tuesday, earnings after Wednesday's close, a gap up and an intraday whipsaw on Thursday, and a
 partial retrace on Friday. QQQ moves with NVDA at a fraction of the size; VIX drifts up into earnings.
 
-Run from the price_intelligence_agent folder:  uv run python -m scripts.generate_synthetic_prices
+Run from agents/:  uv run python -m price_intelligence_agent.scripts.generate_synthetic_prices
 """
 
 import csv

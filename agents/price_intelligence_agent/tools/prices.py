@@ -5,8 +5,8 @@ from zoneinfo import ZoneInfo
 
 from langchain.tools import tool
 
-from utils import data
-from utils.metrics import volatility_summary
+from price_intelligence_agent.utils import data
+from price_intelligence_agent.utils.metrics import volatility_summary
 
 BAR_MINUTES = 30
 

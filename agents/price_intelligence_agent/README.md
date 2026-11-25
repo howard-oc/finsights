@@ -26,31 +26,49 @@ model can't get them wrong. The thresholds for regime, trend and flags are const
 
 ## Run
 
-From the finsights repo root, install once with `uv sync` and make sure `.env` there is filled in. Then from
-`agents/price_intelligence_agent/`:
+From the finsights repo root, install once with `uv sync` and make sure `.env` there is filled in. Everything runs
+from the `agents/` folder, which is the import root for all finsights agents (the supervisor notebook uses it too):
 
 ```bash
-uv run python agent.py NVDA                          # print the report as JSON
-uv run python -m scripts.generate_synthetic_prices  # regenerate the synthetic data
-uv run langgraph dev                                 # open in LangGraph Studio
-uv run langgraph deploy --name price-intelligence-agent   # deploy to LangSmith (remote build if no Docker)
+cd agents
+uv run python -m price_intelligence_agent.agent NVDA                          # print the report as JSON
+uv run python -m price_intelligence_agent.scripts.generate_synthetic_prices  # regenerate the synthetic data
+uv run langgraph dev                                                         # open in LangGraph Studio
 ```
 
-## Use from another agent
+`agents/langgraph.json` and `agents/requirements.txt` are shared by all agents in `agents/`. To deploy, see
+`docs/demo_guide/deployment.md`.
+
+## Use from the supervisor
+
+The supervisor (`agents/supervisor_agent/supervisor.ipynb`) puts `agents/` on `sys.path`, so it can import this agent
+directly and use it as a tool. It runs in the same process, so the whole run is one LangSmith trace with the price
+agent nested inside.
 
 ```python
-from agent import analyse_price, build_agent, NAME, DESCRIPTION
+from price_intelligence_agent.agent import price_intelligence   # a LangChain tool
+
+agent = create_agent(model=model, context_schema=InvestigationContext,
+                     tools=[get_company, get_date, price_intelligence])
+```
+
+Or call it directly:
+
+```python
+from price_intelligence_agent.agent import analyse_price
 
 report = analyse_price("Nvidia")      # PriceIntelligenceReport (pydantic); raises ValueError if there's no data
 report.regime, report.relative_performance_pct, report.risk_flags
 ```
 
-`NAME`, `DESCRIPTION` and `build_agent()` let the Research Supervisor register it as a sub-agent.
+Inside this agent every import is written in full (`from price_intelligence_agent.utils import data`), so its
+`utils`, `tools` and so on never clash with `agents/utils` or another agent's modules.
 
 ## Evals (LangSmith)
 
 ```bash
-uv run python -m evals.run_evals <experiment-name>
+cd agents
+uv run python -m price_intelligence_agent.evals.run_evals <experiment-name>
 ```
 
 Dataset `price-intelligence-scenarios-<ATTENDEE_NAME>`: seven synthetic weeks with planted patterns (calm, normal,
@@ -64,6 +82,7 @@ summary agrees with regime, provenance stated.
 | v2 | rules moved into code | 100% | 100% | 0 | 9.3s | $0.0058 |
 | v3 | full price intelligence report | 100% | 100% | 0 | 10.2s | $0.0080 |
 | v4 | one tool, one call | 100% | 100% | 0 | 5.3s | $0.0040 |
+| v5 | full-path imports, callable from the supervisor | 100% | 100% | 0 | — | — |
 
 ## Layout
 
@@ -79,8 +98,7 @@ agents/price_intelligence_agent/
 ├── data/                 prices.csv, vix.csv, instruments.csv, eval_prices.csv (all synthetic)
 ├── evals/                scenarios.py (dataset), run_evals.py (experiments)
 ├── scripts/generate_synthetic_prices.py
-├── langgraph.json
-└── requirements.txt
+└── (langgraph.json and requirements.txt live one level up, in agents/)
 ```
 
 Outputs are analysis only, not investment advice.

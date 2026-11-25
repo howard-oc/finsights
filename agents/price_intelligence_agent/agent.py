@@ -1,9 +1,11 @@
 """Price Intelligence agent for finsights.
 
-    uv run python agent.py NVDA
+Run it from the agents/ folder:
+    uv run python -m price_intelligence_agent.agent NVDA
 
-From another agent:
-    from agent import analyse_price
+From the supervisor (with agents/ on sys.path, as in supervisor.ipynb):
+    from price_intelligence_agent.agent import price_intelligence      # a tool: add it to the supervisor's tools
+    from price_intelligence_agent.agent import analyse_price           # or call it directly
     report = analyse_price("Nvidia")    # PriceIntelligenceReport
 
 The model makes one tool call (get_price_report) and writes the key events and summary. The numbers, regime, trend
@@ -15,10 +17,11 @@ import sys
 from langchain.agents import create_agent
 from langchain.agents.middleware import after_agent
 from langchain.chat_models import init_chat_model
+from langchain.tools import tool
 
-from schemas import PriceIntelligenceReport, PriceNarrative
-from tools.prices import get_price_report, price_report
-from utils.models import PROJECT_ROOT, model
+from price_intelligence_agent.schemas import PriceIntelligenceReport, PriceNarrative
+from price_intelligence_agent.tools.prices import get_price_report, price_report
+from price_intelligence_agent.utils.models import PROJECT_ROOT, model
 
 NAME = "price_intelligence_agent"
 DESCRIPTION = (
@@ -72,6 +75,23 @@ def analyse_price(company_or_ticker: str, start: str | None = None, end: str | N
     if not isinstance(report, PriceIntelligenceReport):
         raise ValueError(result["messages"][-1].text)
     return report
+
+
+@tool(parse_docstring=True)
+def price_intelligence(company_or_ticker: str, start: str | None = None, end: str | None = None) -> dict | str:
+    """Price Intelligence for a company: latest price, return, high and low, volume, benchmark comparison, VIX,
+    volatility regime, trend, risk flags, key moves and a short summary. All numbers are computed from historical
+    data, with an as-of timestamp.
+
+    Args:
+        company_or_ticker: A company name such as "NVIDIA" or a ticker such as "NVDA".
+        start: Optional start date, for example "2026-11-16".
+        end: Optional date to stop before, for example "2026-11-21".
+    """
+    try:
+        return analyse_price(company_or_ticker, start, end).model_dump()
+    except ValueError as error:
+        return str(error)
 
 
 if __name__ == "__main__":

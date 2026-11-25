@@ -1,6 +1,6 @@
 """Run the agent on the scenario dataset in LangSmith and score it.
 
-    uv run python -m evals.run_evals <experiment-name>
+    cd agents && uv run python -m price_intelligence_agent.evals.run_evals <experiment-name>
 
 Every score is 1 for good, 0 for bad:
   regime_correct, regime_within_one, trend_correct   the report's decisions match the expected ones
@@ -16,14 +16,14 @@ import os
 import re
 import sys
 
-from evals.scenarios import EVAL_CSV, build
+from price_intelligence_agent.evals.scenarios import EVAL_CSV, build
 
 os.environ["PRICE_INTEL_PRICES_CSV"] = str(EVAL_CSV)  # must be set before the agent is imported
 
 from langsmith import Client  # noqa: E402
 
-from agent import agent  # noqa: E402
-from utils.metrics import REGIMES  # noqa: E402
+from price_intelligence_agent.agent import agent  # noqa: E402
+from price_intelligence_agent.utils.metrics import REGIMES  # noqa: E402
 
 DATASET = f"price-intelligence-scenarios-{os.environ.get('ATTENDEE_NAME', 'anon')}"
 

@@ -6,7 +6,7 @@ rather than hand-guessed. Expected flags and trend come from what each scenario 
 chosen so its data clearly matches its labels: volatility well away from regime boundaries, and a range-expansion
 ratio that agrees with the expected trend.
 
-Run from agents/price_intelligence_agent:  uv run python -m evals.scenarios
+Run from agents/:  uv run python -m price_intelligence_agent.evals.scenarios
 """
 
 import csv
@@ -15,7 +15,7 @@ import random
 from datetime import datetime, timedelta
 from pathlib import Path
 
-from utils.metrics import REGIMES, volatility_summary
+from price_intelligence_agent.utils.metrics import REGIMES, volatility_summary
 
 DATA = Path(__file__).resolve().parent.parent / "data"
 EVAL_CSV = DATA / "eval_prices.csv"
