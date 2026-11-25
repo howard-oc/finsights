@@ -232,7 +232,7 @@ It should:
 
 ### Technology Responsibilities
 
-| Technology | Role in SIGNAL LENS |
+| Technology | Role in FINSIGHTS LENS |
 |---|---|
 | Python | Core application logic and data processing |
 | LangChain | LLM integration, prompts, tools and structured outputs |
@@ -291,7 +291,7 @@ Original source data should be retained separately from AI-generated analysis so
 
 ## 7. LangSmith: Observability and Evaluation
 
-LangSmith is used to inspect and evaluate the execution of SIGNAL LENS.
+LangSmith is used to inspect and evaluate the execution of FINSIGHTS.
 
 All team components should use a shared LangSmith project where appropriate.
 
@@ -345,7 +345,7 @@ FINSIGHT may:
 - Highlight conflicting information.
 - Suggest areas for additional research.
 
-SIGNAL LENS must not:
+FINSIGHTS must not:
 - Recommend buying, selling or holding securities.
 - Provide personalised investment recommendations.
 - Suggest personal portfolio allocations.
