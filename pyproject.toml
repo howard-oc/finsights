@@ -18,4 +18,9 @@ dependencies = [
 ]
 
 [tool.uv.workspace]
+
+[dependency-groups]
+dev = [
+    "yfinance>=1.8.0",
+]
 # members = ["01_kyc_agent", "02_transaction_monitoring_agent", "03_document_summary_agent"]

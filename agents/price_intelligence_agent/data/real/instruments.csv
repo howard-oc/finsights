@@ -1,0 +1,3 @@
+ticker,company_name,currency,exchange,timezone,benchmark
+NVDA,NVIDIA Corporation,USD,NASDAQ,America/New_York,QQQ
+QQQ,Invesco QQQ Trust (Nasdaq-100),USD,NASDAQ,America/New_York,
