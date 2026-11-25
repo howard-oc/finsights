@@ -6,16 +6,16 @@ from typing import TypedDict
 from langchain.chat_models import init_chat_model
 from langgraph.graph import END, StateGraph
 
-from prompts import ADVICE_GUARDRAIL, CLASSIFICATION_PROMPT, SUMMARY_PROMPT
-from schemas import (
+from lseg_news_agent.prompts import ADVICE_GUARDRAIL, CLASSIFICATION_PROMPT, SUMMARY_PROMPT
+from lseg_news_agent.schemas import (
     DataQualityNote, EventGroup, KeyDevelopment, NewsClassificationBatch,
     NewsIntelligenceOutput, NewsSummaryBatch, RawNewsArticle, ResearchPeriod,
 )
-from tools.news import (
+from lseg_news_agent.tools.news import (
     advice_policy_violations, deduplicate_articles, filter_articles,
     find_conflicts, organise_timeline, retrieve_news, validate_traceability,
 )
-from utils.models import model
+from lseg_news_agent.utils.models import model
 
 NAME = "lseg_news_agent"
 DESCRIPTION = "Retrieves, deduplicates, classifies, summarises and chronologically organises company news with source traceability."
