@@ -6,8 +6,8 @@ from difflib import SequenceMatcher
 
 from langchain.tools import tool
 
-from schemas import Conflict, DataQualityNote, EventGroup, RawNewsArticle, TimelineEvent
-from utils.data import load_news_feed
+from lseg_news_agent.schemas import Conflict, DataQualityNote, EventGroup, RawNewsArticle, TimelineEvent
+from lseg_news_agent.utils.data import load_news_feed
 
 
 def parse_utc(value: str | None) -> datetime | None:

@@ -4,7 +4,7 @@ import json
 import os
 from pathlib import Path
 
-from schemas import RawNewsArticle
+from lseg_news_agent.schemas import RawNewsArticle
 
 NEWS_JSON = Path(os.environ.get("LSEG_NEWS_JSON") or Path(__file__).resolve().parent.parent / "data" / "news.json")
 
