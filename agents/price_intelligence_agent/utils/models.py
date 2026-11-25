@@ -5,7 +5,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent  # lseg_vix_agent/
+PROJECT_ROOT = Path(__file__).resolve().parent.parent  # price_intelligence_agent/
 
 REPO_ROOT = PROJECT_ROOT.parents[1]  # agents/<this agent>/ -> finsights repo root
 

@@ -6,7 +6,7 @@ rather than hand-guessed. Expected flags and trend come from what each scenario 
 chosen so its data clearly matches its labels: volatility well away from regime boundaries, and a range-expansion
 ratio that agrees with the expected trend.
 
-Run from agents/lseg_vix_agent:  uv run python -m evals.scenarios
+Run from agents/price_intelligence_agent:  uv run python -m evals.scenarios
 """
 
 import csv
@@ -14,6 +14,8 @@ import math
 import random
 from datetime import datetime, timedelta
 from pathlib import Path
+
+from utils.metrics import REGIMES, volatility_summary
 
 DATA = Path(__file__).resolve().parent.parent / "data"
 EVAL_CSV = DATA / "eval_prices.csv"
@@ -83,7 +85,6 @@ NVDA = {
     "about": "Synthetic NVDA earnings week: 6.1% gap up Thursday, then an intraday whipsaw.",
 }
 
-REGIMES = ["low", "normal", "elevated", "extreme"]
 
 
 def _bars(ticker: str, spec: dict, seed: int) -> list[dict]:
@@ -106,6 +107,7 @@ def _bars(ticker: str, spec: dict, seed: int) -> list[dict]:
 
 
 BOUNDARIES = (25, 50, 80)
+MAX_SEED_TRIES = 500
 TREND_OK = {
     "stable": lambda r: 0.8 <= r <= 1.25,
     "volatility_rising": lambda r: r >= 1.5,
@@ -130,41 +132,39 @@ def reference_regime(metrics: dict, planted_reversal: bool) -> str:
 
 def _clear_cut(rows: list[dict], expected_trend: str) -> bool:
     """True if the scenario's data unambiguously matches its labels."""
-    from tools.volatility import compute_metrics_from_bars
-
-    m = compute_metrics_from_bars(rows)
+    m = volatility_summary(rows)
     vol_ok = all(abs(m["realized_vol_annualized_pct"] - b) >= 4 for b in BOUNDARIES)
     return vol_ok and TREND_OK[expected_trend](m["range_expansion_ratio"])
 
 
 def build() -> list[dict]:
     """Write data/eval_prices.csv and return the labelled examples (inputs + expected outputs)."""
-    rows = []
+    by_ticker = {}
     for n, (ticker, spec) in enumerate(SCENARIOS.items()):
-        seed = 1000 * n
-        while not _clear_cut(candidate := _bars(ticker, spec, seed), spec["trend"]):
-            seed += 1
-        rows += candidate
+        for seed in range(1000 * n, 1000 * n + MAX_SEED_TRIES):
+            if _clear_cut(candidate := _bars(ticker, spec, seed), spec["trend"]):
+                break
+        else:
+            raise ValueError(f"No seed in {MAX_SEED_TRIES} tries gives {ticker} clear-cut data; adjust its spec.")
+        by_ticker[ticker] = candidate
     with (DATA / "prices.csv").open() as f:
-        rows += list(csv.DictReader(f))  # NVDA, unchanged
+        real_rows = list(csv.DictReader(f))  # NVDA (and its benchmark), unchanged
+    by_ticker["NVDA"] = [
+        {**r, **{k: float(r[k]) for k in ("open", "high", "low", "close")}, "volume": int(r["volume"])}
+        for r in real_rows
+        if r["ticker"] == "NVDA"
+    ]
+
     with EVAL_CSV.open("w", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=list(rows[0]))
+        writer = csv.DictWriter(f, fieldnames=list(real_rows[0]))
         writer.writeheader()
-        writer.writerows(rows)
-
-    # Compute metrics from the file we just wrote, the same way the agent's tool will.
-    import os
-    os.environ["LSEG_VIX_PRICES_CSV"] = str(EVAL_CSV)
-    import importlib
-
-    import utils.data
-    import tools.volatility
-    importlib.reload(utils.data)
-    importlib.reload(tools.volatility)
+        for rows in by_ticker.values():
+            writer.writerows(rows)
+        writer.writerows(r for r in real_rows if r["ticker"] != "NVDA")
 
     examples = []
     for ticker, spec in {**SCENARIOS, "NVDA": NVDA}.items():
-        m = tools.volatility.compute_metrics(ticker)
+        m = volatility_summary(by_ticker[ticker])
         examples.append(
             {
                 "inputs": {"ticker": ticker},
