@@ -18,6 +18,7 @@ import sys
 
 from price_intelligence_agent.evals.scenarios import EVAL_CSV, build
 
+os.environ["PRICE_INTEL_DATASET"] = "synthetic"  # evals always use the synthetic data their labels come from
 os.environ["PRICE_INTEL_PRICES_CSV"] = str(EVAL_CSV)  # must be set before the agent is imported
 
 from langsmith import Client  # noqa: E402

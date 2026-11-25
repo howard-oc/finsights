@@ -98,7 +98,7 @@ def price_report(company_or_ticker: str, start: str | None = None, end: str | No
         "exchange": instrument.get("exchange"),
         "as_of": to_utc(window_end, tz),
         "data_status": data.DATA_STATUS,
-        "data_source": data.DATA_SOURCE,
+        "data_source": data.data_source(),
         "window_start": to_utc(bars[0]["timestamp"], tz),
         "window_end": to_utc(window_end, tz),
         "latest_price": bars[-1]["close"],

@@ -24,9 +24,27 @@ A request is one tool call and one answer. The model writes only the key events 
 model can't get them wrong. The thresholds for regime, trend and flags are constants at the top of
 `utils/metrics.py`.
 
-> **Data is synthetic.** `data/` holds a generated week (16-20 Nov 2026) of 30-minute bars for NVDA and its benchmark
-> QQQ, daily VIX closes and instrument reference data. It is not real market data, and reports say
-> `data_source: synthetic`, `data_status: historical`. To use other data, replace the CSVs with the same columns.
+## Data: synthetic or real
+
+| `PRICE_INTEL_DATASET` | Folder | What it is | `data_source` in reports |
+|---|---|---|---|
+| `synthetic` (default) | `data/` | Generated NVDA/QQQ week, 16-20 Nov 2026, plus VIX and instruments. The evals always use this. | `synthetic` |
+| `real` | `data/real/` | Real public 30-minute bars for NVDA and QQQ and daily VIX, 1 Oct - 24 Nov 2026, from Yahoo Finance. Covers Jensen Huang stepping down (~12 Nov) and being reinstated (23 Nov: NVDA +31%). | `Yahoo Finance (public)` |
+
+Set it in the repo-root `.env` (`PRICE_INTEL_DATASET=real`) or the environment. It is read on every call, so you can
+also switch inside a notebook with `os.environ["PRICE_INTEL_DATASET"] = "real"`. If it is set in `.env` when you
+deploy, the deployed agent uses that dataset.
+
+To refresh the real data (yfinance is a dev dependency; Yahoo keeps 30-minute bars for about 60 days):
+
+```bash
+cd agents
+uv run python -m price_intelligence_agent.scripts.fetch_real_prices
+```
+
+Daily closes in the real data are the last trade of the final 30-minute bar, which can differ slightly from the
+official closing-auction price (for example 165.19 vs 165.05 on 23 Nov). Yahoo's terms are for personal use: fine for
+a hackathon demo; a production version would use a licensed source such as LSEG Data.
 
 ## Run
 
@@ -110,9 +128,10 @@ agents/price_intelligence_agent/
 ├── utils/metrics.py      volatility maths and the regime / trend / flag rules
 ├── utils/data.py         reads data/*.csv
 ├── utils/models.py       loads the repo-root .env and MODEL_NAME
-├── data/                 prices.csv, vix.csv, instruments.csv, eval_prices.csv (all synthetic)
+├── data/                 synthetic prices.csv, vix.csv, instruments.csv, eval_prices.csv
+├── data/real/            real public prices, vix, instruments (PRICE_INTEL_DATASET=real)
 ├── evals/                scenarios.py (dataset), run_evals.py (experiments)
-├── scripts/generate_synthetic_prices.py
+├── scripts/              generate_synthetic_prices.py, fetch_real_prices.py
 └── (langgraph.json and requirements.txt live one level up, in agents/)
 ```
 
