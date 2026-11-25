@@ -98,7 +98,7 @@ def main():
             if client.has_dataset(dataset_name=dataset_name):
                 dataset = client.read_dataset(dataset_name=dataset_name)
             else:
-                dataset = client.create_dataset(dataset_name, description="Synthetic Asterion news agent scenarios")
+                dataset = client.create_dataset(dataset_name, description="Synthetic NVDA news agent scenarios")
             client.create_examples(dataset_id=dataset.id, examples=build_examples())
             print(f"Synced LangSmith dataset: {dataset_name}")
         except Exception as exc:

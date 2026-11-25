@@ -29,11 +29,11 @@ def test_synthetic_feed_has_planted_cases():
 
 def test_filter_keeps_only_requested_ticker_company_and_dates():
     kept, notes = filter_articles(
-        load_articles(), "Asterion Technologies", "ASTR", "2026-11-18", "2026-11-25"
+        load_articles(), "NVDA", "ASTR", "2026-11-18", "2026-11-25"
     )
     assert kept
     assert all(a.ticker == "ASTR" for a in kept)
-    assert all(a.company_name == "Asterion Technologies" for a in kept)
+    assert all(a.company_name == "NVDA" for a in kept)
     assert all(parse_utc(a.published_at) is not None for a in kept)
     assert any(n.reason == "invalid_or_missing_timestamp" for n in notes)
     assert any(n.reason == "wrong_company_or_ticker" for n in notes)
@@ -48,7 +48,7 @@ def test_exact_and_near_duplicate_groups_keep_every_source():
 
 
 def test_timeline_groups_dates_and_dedicated_unknown_group():
-    kept, _ = filter_articles(load_articles(), "Asterion Technologies", "ASTR", "2026-11-18", "2026-11-25")
+    kept, _ = filter_articles(load_articles(), "NVDA", "ASTR", "2026-11-18", "2026-11-25")
     groups = deduplicate_articles(kept)
     timeline = organise_timeline(groups, newest_first=True)
     assert "2026-11-25" in timeline

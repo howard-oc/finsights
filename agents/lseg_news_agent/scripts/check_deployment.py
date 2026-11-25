@@ -24,7 +24,7 @@ def main() -> int:
     try:
         from agent import agent, analyse_news
         result = agent.invoke({
-            "company_name": "Asterion Technologies",
+            "company_name": "NVDA",
             "ticker": "ASTR",
             "start_date": "2026-11-18",
             "end_date": "2026-11-25",
@@ -32,7 +32,7 @@ def main() -> int:
         })
         if not result.get("output"):
             errors.append("Graph invocation did not produce NewsIntelligenceOutput")
-        report = analyse_news("Asterion Technologies", "ASTR", "2026-11-18", "2026-11-25")
+        report = analyse_news("NVDA", "ASTR", "2026-11-18", "2026-11-25")
         if report.ticker != "ASTR":
             errors.append("Standalone analyse_news returned the wrong ticker")
     except Exception as exc:

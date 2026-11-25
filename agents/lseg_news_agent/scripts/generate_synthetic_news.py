@@ -1,4 +1,4 @@
-"""Generate the synthetic Asterion Technologies news feed."""
+"""Generate the synthetic NVDA Corporation news feed."""
 
 import json
 from pathlib import Path
@@ -40,6 +40,8 @@ ARTICLES = [
 
 rows=[]
 for article_id, company_name, ticker, published_at, headline, source, url, snippet in ARTICLES:
+    if ticker == "ASTR":
+        company_name = "NVDA"
     rows.append({"article_id":article_id,"company_name":company_name,"ticker":ticker,"published_at":published_at,"headline":headline,"source":source,"url":url,"snippet":snippet})
 
 DATA.parent.mkdir(parents=True, exist_ok=True)
