@@ -5,6 +5,7 @@ The model only produces PriceNarrative (what it is good at: picking out what mat
 field of PriceIntelligenceReport comes from tools/prices.py, added by the add_price_facts hook in agent.py.
 """
 
+from dataclasses import dataclass
 from typing import Literal
 
 from pydantic import BaseModel, Field
@@ -81,3 +82,16 @@ class PriceIntelligenceReport(BaseModel):
     summary: str
 
 
+
+
+@dataclass
+class PriceContext:
+    """What the caller is investigating. Same fields as the supervisor's InvestigationContext, so it can pass its own.
+
+    company_name: used when the request doesn't name a company.
+    date_str: the investigation day (YYYY-MM-DD). The agent looks at the trailing week up to and including that day,
+    and never at data after it.
+    """
+
+    company_name: str = ""
+    date_str: str = ""

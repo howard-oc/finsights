@@ -56,12 +56,23 @@ agent = create_agent(model=model, context_schema=InvestigationContext,
                      tools=[get_company, get_date, price_intelligence])
 ```
 
+**Context.** The agent reads `company_name` and `date_str` from the context its caller passes, so the supervisor's
+`InvestigationContext` works as is (`price_agent.invoke(..., context=runtime.context)`):
+
+- no company in the request: it uses `company_name`
+- `date_str` is the investigation day: the report covers the trailing week up to and including that day, and never
+  uses data after it (no look-ahead), even if the request asks for later dates
+- a plain date as `end` includes that day ("as of 2026-11-19" covers the 19th)
+
+Our `price_intelligence` tool forwards the supervisor's context the same way.
+
 Or call it directly:
 
 ```python
 from price_intelligence_agent.agent import analyse_price
 
 report = analyse_price("Nvidia")      # PriceIntelligenceReport (pydantic); raises ValueError if there's no data
+report = analyse_price(context=InvestigationContext(company_name="NVDA", date_str="2026-11-19"))
 report.regime, report.relative_performance_pct, report.risk_flags
 ```
 

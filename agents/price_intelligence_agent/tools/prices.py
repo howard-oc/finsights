@@ -1,14 +1,50 @@
 """The agent's one tool: everything about a stock's price over a window, worked out in code."""
 
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from zoneinfo import ZoneInfo
 
-from langchain.tools import tool
+from langchain.tools import ToolRuntime, tool
 
+from price_intelligence_agent.schemas import PriceContext
 from price_intelligence_agent.utils import data
 from price_intelligence_agent.utils.metrics import volatility_summary
 
 BAR_MINUTES = 30
+LOOKBACK_DAYS = 6  # with the investigation day itself: a trailing week
+
+
+def _from_context(context, field: str) -> str | None:
+    """A context field, or None if it's missing or a placeholder like "None"."""
+    value = (getattr(context, field, None) or "").strip()
+    return value if value and value.lower() != "none" else None
+
+
+def resolve_request(
+    company_or_ticker: str | None, start: str | None, end: str | None, context=None
+) -> tuple[str | None, str | None, str | None]:
+    """Fill in what the request leaves out from the caller's context, and never look past the investigation day.
+
+    - No company given: use context.company_name.
+    - `end` as a plain date (YYYY-MM-DD) includes that day; a full timestamp is exclusive.
+    - context.date_str set: the window ends after that day (data after it is never used), and starts a week before
+      it unless an earlier start was asked for.
+    """
+    company = company_or_ticker or _from_context(context, "company_name")
+    if end and len(end) == 10:  # a date on its own means "up to and including that day"
+        try:
+            end = (date.fromisoformat(end) + timedelta(days=1)).isoformat()
+        except ValueError:
+            pass
+    day = _from_context(context, "date_str")
+    if day:
+        try:
+            investigation_day = date.fromisoformat(day[:10])
+        except ValueError:
+            return company, start, end
+        latest_end = (investigation_day + timedelta(days=1)).isoformat()
+        end = min(end, latest_end) if end else latest_end
+        start = start or (investigation_day - timedelta(days=LOOKBACK_DAYS)).isoformat()
+    return company, start, end
 
 
 def to_utc(local_time: str, timezone: str) -> str:
@@ -89,13 +125,23 @@ def mean_of(values: list[float]) -> float:
 
 
 @tool(parse_docstring=True)
-def get_price_report(company_or_ticker: str, start: str | None = None, end: str | None = None) -> dict | str:
+def get_price_report(
+    runtime: ToolRuntime[PriceContext],
+    company_or_ticker: str | None = None,
+    start: str | None = None,
+    end: str | None = None,
+) -> dict | str:
     """Get everything about a stock's price over a window in one call: latest price, return, high and low, volume,
     benchmark and VIX, volatility, daily rows, unusual moves, reversals, and the regime, trend and risk flags.
+    If the run has an investigation context, the company and date window come from it, so no arguments are needed.
 
     Args:
-        company_or_ticker: A ticker such as "NVDA" or a company name such as "Nvidia".
+        company_or_ticker: A ticker such as "NVDA" or a company name such as "Nvidia". Leave out to use the
+            company under investigation.
         start: Optional date or timestamp to start from, for example "2026-11-18".
-        end: Optional date or timestamp to stop before.
+        end: Optional last day to include, for example "2026-11-19".
     """
-    return price_report(company_or_ticker, start, end)
+    company, start, end = resolve_request(company_or_ticker, start, end, runtime.context)
+    if not company:
+        return "No company given and no company under investigation in the context."
+    return price_report(company, start, end)
