@@ -49,7 +49,10 @@ class PriceIntelligenceReport(BaseModel):
 
     # Price performance
     latest_price: float
-    period_return_pct: float
+    previous_close: float | None = Field(description="Close of the session before the window, if known.")
+    period_return_pct: float = Field(description="Change over the window, from previous_close if known, else from the window's open.")
+    period_return_basis: Literal["previous close", "window open"]
+    intraday_return_pct: float = Field(description="From the window's first open to its last close (excludes the opening gap).")
     period_high: float
     period_high_at: str
     period_low: float

@@ -26,13 +26,17 @@ RISING_RATIO = 1.5
 FALLING_RATIO = 0.67
 
 
-def daily(bars: list[dict]) -> list[dict]:
-    """One row per trading day: open, high, low, close, volume, return, overnight gap and range."""
+def daily(bars: list[dict], prev_close: float | None = None) -> list[dict]:
+    """One row per trading day: open, high, low, close, volume, return, overnight gap and range.
+
+    `prev_close` is the close of the session before the window, so the first day's return and gap are measured from
+    it, the way a day's move is normally reported.
+    """
     by_day = {}
     for bar in bars:
         by_day.setdefault(bar["timestamp"][:10], []).append(bar)
 
-    days, prev_close = [], None
+    days = []
     for date, day_bars in sorted(by_day.items()):
         high = max(b["high"] for b in day_bars)
         low = min(b["low"] for b in day_bars)
@@ -62,9 +66,10 @@ def intraday_returns(bars: list[dict]) -> list[tuple[str, float]]:
     ]
 
 
-def max_drawdown_pct(bars: list[dict]) -> float:
-    """Worst fall from a running peak to a later low, in percent (negative)."""
-    peak, worst = bars[0]["open"], 0.0
+def max_drawdown_pct(bars: list[dict], prev_close: float | None = None) -> float:
+    """Worst fall from a running peak to a later low, in percent (negative). Starts from the previous close if known,
+    so a gap down at the start of the window counts."""
+    peak, worst = prev_close or bars[0]["open"], 0.0
     for bar in bars:
         worst = min(worst, bar["low"] / peak - 1)
         peak = max(peak, bar["high"])
@@ -107,9 +112,9 @@ def reversals(moves: list[dict]) -> list[dict]:
     ]
 
 
-def volatility_summary(bars: list[dict]) -> dict:
+def volatility_summary(bars: list[dict], prev_close: float | None = None) -> dict:
     """Volatility metrics plus the regime, trend and risk flags for a window of bars (one ticker, oldest first)."""
-    days = daily(bars)
+    days = daily(bars, prev_close)
     returns = [r for _, r in intraday_returns(bars)]
     bars_per_day = max(d["bars"] for d in days)
     realized = pstdev(returns) * math.sqrt(bars_per_day * TRADING_DAYS) if len(returns) > 1 else 0.0
@@ -123,7 +128,7 @@ def volatility_summary(bars: list[dict]) -> dict:
     gaps = [d["overnight_gap_pct"] for d in days if d["overnight_gap_pct"] is not None]
     largest_gap = max(gaps, key=abs, default=None)
     vol_pct = round(realized * 100, 1)
-    drawdown = max_drawdown_pct(bars)
+    drawdown = max_drawdown_pct(bars, prev_close)
     moves = unusual_moves(bars)
     spikes = volume_spikes(bars)
     turns = reversals(moves)
@@ -161,7 +166,10 @@ def volatility_summary(bars: list[dict]) -> dict:
         flags.append("drawdown_over_5pct")
 
     return {
-        "period_return_pct": round((bars[-1]["close"] / bars[0]["open"] - 1) * 100, 2),
+        "period_return_pct": round((bars[-1]["close"] / (prev_close or bars[0]["open"]) - 1) * 100, 2),
+        "period_return_basis": "previous close" if prev_close else "window open",
+        "previous_close": prev_close,
+        "intraday_return_pct": round((bars[-1]["close"] / bars[0]["open"] - 1) * 100, 2),
         "realized_vol_annualized_pct": vol_pct,
         "parkinson_vol_annualized_pct": round(parkinson * 100, 1),
         "max_drawdown_pct": drawdown,

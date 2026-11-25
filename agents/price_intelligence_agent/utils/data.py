@@ -1,8 +1,8 @@
 """Read the CSV files the agent works from: prices, instruments and VIX.
 
 Two datasets, chosen with PRICE_INTEL_DATASET (read on every call, so it can be set in .env or changed at runtime):
-  synthetic (default)  data/            generated NVDA/QQQ week, used by the evals
-  real                 data/real/       real public prices from Yahoo Finance (scripts/fetch_real_prices.py)
+  real (default)       data/real/       real public prices from Yahoo Finance (scripts/fetch_real_prices.py)
+  synthetic            data/            generated NVDA/QQQ week, used by the evals
 
 Every call reads the files again, so edits to the CSVs show up straight away.
 """
@@ -21,8 +21,8 @@ DATA_STATUS = "historical"  # live, delayed or historical
 
 
 def dataset() -> str:
-    """The dataset in use: PRICE_INTEL_DATASET, defaulting to synthetic."""
-    name = (os.environ.get("PRICE_INTEL_DATASET") or "synthetic").strip().lower()
+    """The dataset in use: PRICE_INTEL_DATASET, defaulting to real."""
+    name = (os.environ.get("PRICE_INTEL_DATASET") or "real").strip().lower()
     if name not in DATASETS:
         raise ValueError(f"PRICE_INTEL_DATASET={name!r}; use one of {', '.join(DATASETS)}")
     return name

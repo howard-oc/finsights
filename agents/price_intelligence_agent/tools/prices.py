@@ -63,7 +63,8 @@ def price_report(company_or_ticker: str, start: str | None = None, end: str | No
         return f"There is no price data for {company_or_ticker}. Stocks with data: {', '.join(known)}."
 
     tz = instrument.get("timezone") or "America/New_York"
-    summary = volatility_summary(bars)
+    prev_close = previous_close(ticker, bars[0]["timestamp"])
+    summary = volatility_summary(bars, prev_close)
     days = summary["daily"]
     high = max(bars, key=lambda b: b["high"])
     low = min(bars, key=lambda b: b["low"])
@@ -82,7 +83,8 @@ def price_report(company_or_ticker: str, start: str | None = None, end: str | No
     # Benchmark and VIX over the same window.
     benchmark = instrument.get("benchmark") or None
     bench_bars = data.bars(benchmark, start, end) if benchmark else []
-    bench_return = round((bench_bars[-1]["close"] / bench_bars[0]["open"] - 1) * 100, 2) if len(bench_bars) > 1 else None
+    bench_base = (previous_close(benchmark, bench_bars[0]["timestamp"]) or bench_bars[0]["open"]) if bench_bars else None
+    bench_return = round((bench_bars[-1]["close"] / bench_base - 1) * 100, 2) if len(bench_bars) > 1 else None
     vix = [float(r["close"]) for r in data.table("vix") if days[0]["date"] <= r["date"] <= days[-1]["date"]]
 
     # Times the model might quote go out in UTC, like the rest of the report.
@@ -118,6 +120,12 @@ def price_report(company_or_ticker: str, start: str | None = None, end: str | No
         "vix_change": round(vix[-1] - vix[0], 2) if len(vix) > 1 else None,
         **summary,
     }
+
+
+def previous_close(ticker: str, before: str) -> float | None:
+    """Close of the last bar before `before` (the session before the window), or None if there's no earlier data."""
+    earlier = data.bars(ticker, None, before)
+    return earlier[-1]["close"] if earlier else None
 
 
 def mean_of(values: list[float]) -> float:

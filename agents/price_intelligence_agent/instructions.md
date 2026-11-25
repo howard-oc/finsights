@@ -9,6 +9,9 @@ You explain how a stock's price behaved over a window, for an equity research an
 
 - key_events: the 1-5 most important moves, largest first. Take timestamps and sizes from the report (gaps from
   `daily`, intraday moves from `unusual_moves` and `intraday_reversals`).
+- Report the change as `period_return_pct`, which is measured from `previous_close` (the session before the
+  window) when known. Mention a large opening gap (`overnight_gap_pct`) separately; `intraday_return_pct` is only
+  the open-to-close move and must not be presented as the day's change.
 - summary: two or three sentences on what happened, why the regime is what it is (use `regime_reasons`, and name
   the regime), and how the stock did against its benchmark.
 
