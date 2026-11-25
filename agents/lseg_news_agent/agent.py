@@ -1,9 +1,14 @@
-"""News Intelligence Agent: standalone LangGraph workflow for company news."""
+"""News Intelligence Agent: standalone LangGraph workflow and LangChain supervisor tool."""
 
-import sys
+from dataclasses import dataclass
+from datetime import datetime, timedelta
 from typing import TypedDict
+from pathlib import Path
 
+from langchain.agents import create_agent
+from langchain.agents.middleware import after_agent
 from langchain.chat_models import init_chat_model
+from langchain.tools import ToolRuntime, tool
 from langgraph.graph import END, StateGraph
 
 from lseg_news_agent.prompts import ADVICE_GUARDRAIL, CLASSIFICATION_PROMPT, SUMMARY_PROMPT
@@ -15,10 +20,22 @@ from lseg_news_agent.tools.news import (
     advice_policy_violations, deduplicate_articles, filter_articles,
     find_conflicts, organise_timeline, retrieve_news, validate_traceability,
 )
+from lseg_news_agent.utils.data import load_news_feed
 from lseg_news_agent.utils.models import model
 
 NAME = "lseg_news_agent"
-DESCRIPTION = "Retrieves, deduplicates, classifies, summarises and chronologically organises company news with source traceability."
+DESCRIPTION = (
+    "News Intelligence: retrieves, deduplicates, classifies, summarises and chronologically organises company news "
+    "with source traceability."
+)
+
+
+@dataclass
+class NewsContext:
+    """Caller investigation context, compatible with the research supervisor."""
+
+    company_name: str = ""
+    date_str: str = ""
 
 
 class NewsAgentState(TypedDict, total=False):
@@ -251,27 +268,140 @@ def build_graph():
 
 
 def build_agent(**kwargs):
-    """VIX-style public graph factory for LangGraph and supervisors."""
-    return build_graph()
+    """Build a LangChain supervisor-compatible agent around the deterministic news graph."""
+    return create_agent(
+        model=init_chat_model(model),
+        tools=[get_news_report],
+        system_prompt=(Path(__file__).resolve().parent / "instructions.md").read_text(),
+        response_format=NewsIntelligenceOutput,
+        context_schema=NewsContext,
+        middleware=[add_news_facts],
+        name=NAME,
+        **kwargs,
+    )
 
 
-agent = build_agent()  # registered in langgraph.json
+_news_workflow = build_graph()
 
 
-def analyse_news(company_name: str, ticker: str, start_date: str, end_date: str, newest_first: bool = True) -> NewsIntelligenceOutput:
-    result = agent.invoke({
-        "company_name": company_name,
-        "ticker": ticker,
-        "start_date": start_date,
-        "end_date": end_date,
-        "newest_first": newest_first,
-    }, config={"tags": ["news-agent"], "metadata": {"project": "finsights"}})
+def resolve_request(
+    company_or_ticker: str | None = None,
+    ticker: str | None = None,
+    start: str | None = None,
+    end: str | None = None,
+    context=None,
+) -> tuple[str, str, str, str]:
+    """Resolve supervisor context and optional tool arguments to a concrete news query."""
+    context_company = getattr(context, "company_name", None) if context is not None else None
+    context_date = getattr(context, "date_str", None) if context is not None else None
+    if isinstance(context, dict):
+        context_company = context.get("company_name")
+        context_date = context.get("date_str")
+
+    articles = load_news_feed()
+    target = (ticker or company_or_ticker or context_company or "").strip()
+
+    match = None
+    for article in articles:
+        target_lower = target.lower()
+        if (
+            target_lower
+            and (
+                article.ticker.lower() == target_lower
+                or article.company_name.lower() == target_lower
+                or target_lower in article.headline.lower()
+            )
+        ):
+            match = article
+            break
+        if ticker and article.ticker.lower() == ticker.lower():
+            match = article
+            break
+
+    if match is None:
+        available = sorted({f"{a.company_name}/{a.ticker}" for a in articles})
+        raise ValueError(f"No news data found for '{target}'. Available companies/tickers: {', '.join(available)}")
+
+    end_date = end or context_date
+    if not end_date:
+        dated = [a.published_at for a in articles if a.published_at]
+        end_date = max(dated)[:10] if dated else datetime.now().strftime("%Y-%m-%d")
+
+    start_date = start
+    if not start_date:
+        start_date = (datetime.strptime(end_date[:10], "%Y-%m-%d") - timedelta(days=7)).strftime("%Y-%m-%d")
+
+    return match.company_name, match.ticker, start_date, end_date[:10]
+
+
+def analyse_news(
+    company_name: str,
+    ticker: str,
+    start_date: str,
+    end_date: str,
+    newest_first: bool = True,
+) -> NewsIntelligenceOutput:
+    """Run the news workflow directly without terminal or notebook input."""
+    result = _news_workflow.invoke(
+        {
+            "company_name": company_name,
+            "ticker": ticker,
+            "start_date": start_date,
+            "end_date": end_date,
+            "newest_first": newest_first,
+        },
+        config={"tags": ["news-agent"], "metadata": {"project": "finsights"}},
+    )
     return NewsIntelligenceOutput.model_validate(result["output"])
 
 
-if __name__ == "__main__":
-    company = sys.argv[1] if len(sys.argv) > 1 else "Asterion Technologies"
-    ticker = sys.argv[2] if len(sys.argv) > 2 else "ASTR"
-    start = sys.argv[3] if len(sys.argv) > 3 else "2026-11-18"
-    end = sys.argv[4] if len(sys.argv) > 4 else "2026-11-25"
-    print(analyse_news(company, ticker, start, end).model_dump_json(indent=2))
+@tool(parse_docstring=True)
+def get_news_report(
+    runtime: ToolRuntime[NewsContext],
+    company_or_ticker: str | None = None,
+    ticker: str | None = None,
+    start: str | None = None,
+    end: str | None = None,
+) -> dict | str:
+    """Retrieve and analyse company news for a research period.
+
+    Args:
+        company_or_ticker: Company name or ticker to analyse. Optional; uses the supervisor context by default.
+        ticker: Optional explicit ticker symbol.
+        start: Optional start date in YYYY-MM-DD format.
+        end: Optional end date in YYYY-MM-DD format.
+    """
+    try:
+        company, resolved_ticker, start_date, end_date = resolve_request(
+            company_or_ticker, ticker, start, end, runtime.context
+        )
+        return analyse_news(company, resolved_ticker, start_date, end_date).model_dump()
+    except (ValueError, KeyError) as error:
+        return str(error)
+
+
+@after_agent
+def add_news_facts(state, runtime):
+    """Replace model-formatted output with the facts and report from the news workflow tool call."""
+    call_args = [
+        call["args"]
+        for message in state["messages"]
+        for call in getattr(message, "tool_calls", None) or []
+        if call["name"] == "get_news_report"
+    ]
+    args = call_args[-1] if call_args else {}
+    try:
+        company, ticker, start, end = resolve_request(
+            args.get("company_or_ticker"),
+            args.get("ticker"),
+            args.get("start"),
+            args.get("end"),
+            runtime.context,
+        )
+        report = analyse_news(company, ticker, start, end)
+        return {"structured_response": report}
+    except (ValueError, KeyError):
+        return None
+
+
+agent = build_agent()
