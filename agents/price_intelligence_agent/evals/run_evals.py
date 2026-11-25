@@ -25,7 +25,7 @@ from langsmith import Client  # noqa: E402
 from price_intelligence_agent.agent import agent  # noqa: E402
 from price_intelligence_agent.utils.metrics import REGIMES  # noqa: E402
 
-DATASET = f"price-intelligence-scenarios-{os.environ.get('ATTENDEE_NAME', 'anon')}"
+DATASET = f"lseg-price-intelligence-scenarios-{os.environ.get('ATTENDEE_NAME', 'anon')}"
 
 
 def sync_dataset(client: Client) -> None:

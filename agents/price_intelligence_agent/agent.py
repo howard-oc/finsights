@@ -23,7 +23,7 @@ from price_intelligence_agent.schemas import PriceIntelligenceReport, PriceNarra
 from price_intelligence_agent.tools.prices import get_price_report, price_report
 from price_intelligence_agent.utils.models import PROJECT_ROOT, model
 
-NAME = "price_intelligence_agent"
+NAME = "lseg_price_intelligence_agent"
 DESCRIPTION = (
     "Price Intelligence: latest price, return, high/low, volume, benchmark, VIX, volatility regime, trend, risk "
     "flags, key moves and a short summary for a stock over a window."

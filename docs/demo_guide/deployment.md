@@ -13,7 +13,7 @@ for you), and deploys it to LangSmith, which gives each agent a hosted API URL.
 {
   "dependencies": ["."],                          // what to install: agents/ + agents/requirements.txt
   "graphs": {                                     // graph name -> file:variable to serve
-    "price_intelligence_agent": "./price_intelligence_agent/agent.py:agent"
+    "lseg_price_intelligence_agent": "./price_intelligence_agent/agent.py:agent"
   },
   "env": "../.env",                               // env vars sent to the deployment (API keys, MODEL_NAME)
   "python_version": "3.12"
@@ -39,8 +39,8 @@ Notes:
 
 ## finsights: price_intelligence_agent
 
-Deployed name: `price-intelligence-agent`
-URL: https://price-intelligence-agent-e7c81654e512554a9066d0a40d3aac6a.us.langgraph.app
+Deployed name: `lseg-price-intelligence-agent`
+URL: https://lseg-price-intelligence-age-c6f431513939515ca815b94e6c2d7072.us.langgraph.app
 
 ### Deploy or update
 
@@ -50,7 +50,7 @@ From the repo root, with `.env` filled in:
 cd agents
 uv run langgraph validate
 set -a && source ../.env && set +a           # make the API key visible to the CLI
-uv run langgraph deploy --name price-intelligence-agent
+uv run langgraph deploy --name lseg-price-intelligence-agent
 ```
 
 New agents (for example the supervisor) are added as more entries under `graphs`; they then deploy together.
@@ -67,12 +67,12 @@ from langgraph_sdk import get_sync_client
 
 load_dotenv(".env")  # repo root
 client = get_sync_client(
-    url="https://price-intelligence-agent-e7c81654e512554a9066d0a40d3aac6a.us.langgraph.app",
+    url="https://lseg-price-intelligence-age-c6f431513939515ca815b94e6c2d7072.us.langgraph.app",
     api_key=os.environ["LANGSMITH_API_KEY"],
 )
 out = client.runs.wait(
     None,  # no thread: a one-off run
-    "price_intelligence_agent",  # the graph name from langgraph.json
+    "lseg_price_intelligence_agent",  # the graph name from langgraph.json
     input={"messages": [{"role": "user", "content": "How did Nvidia trade last week?"}]},
 )
 report = out["structured_response"]  # PriceIntelligenceReport as a dict
@@ -81,7 +81,7 @@ print(report["regime"], report["latest_price"], report["relative_performance_pct
 
 Expected for the synthetic NVDA week: `elevated`, `192.93`, `4.18`.
 
-Runs on the hosted agent are traced in LangSmith under the project `price-intelligence-agent-production`.
+Runs on the hosted agent are traced in LangSmith under the project `lseg-price-intelligence-agent-production`.
 
 ### Remove it
 

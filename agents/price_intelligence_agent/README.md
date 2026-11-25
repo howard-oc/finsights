@@ -1,4 +1,8 @@
-# price_intelligence_agent
+# lseg_price_intelligence_agent
+
+> **Names:** the agent is called `lseg_price_intelligence_agent` (in LangSmith traces, the graph in `agents/langgraph.json`
+> and the `lseg-price-intelligence-agent` deployment). Its Python package and folder stay `price_intelligence_agent`, so
+> imports are `from price_intelligence_agent.agent import ...`.
 
 The **Price Intelligence** component of finsights (root README, sections 3.1 and 4.2). Given a ticker or company
 name, and optionally a time window, it returns a structured `PriceIntelligenceReport` (see `schemas.py`) that the
@@ -71,7 +75,7 @@ cd agents
 uv run python -m price_intelligence_agent.evals.run_evals <experiment-name>
 ```
 
-Dataset `price-intelligence-scenarios-<ATTENDEE_NAME>`: seven synthetic weeks with planted patterns (calm, normal,
+Dataset `lseg-price-intelligence-scenarios-<ATTENDEE_NAME>`: seven synthetic weeks with planted patterns (calm, normal,
 earnings gap, intraday reversal, crash, cooling off, extreme) plus NVDA, with expected regime, trend and flags
 computed from the data. Checks: regime, trend, flag recall, false alarms, volatility grounded, no investment advice,
 summary agrees with regime, provenance stated.

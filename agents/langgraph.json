@@ -1,7 +1,7 @@
 {
   "dependencies": ["."],
   "graphs": {
-    "price_intelligence_agent": "./price_intelligence_agent/agent.py:agent"
+    "lseg_price_intelligence_agent": "./price_intelligence_agent/agent.py:agent"
   },
   "env": "../.env",
   "python_version": "3.12"
